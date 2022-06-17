@@ -17,7 +17,7 @@ jobs:
       - name: Telegram
         run: |
           curl https://core.telegram.org/resources/cidr.txt > telegram.txt
-          echo "[Rule]" >> shadowrocket-rule.conf
+          echo "[Rule]" > shadowrocket-rule.conf
           echo "# 电报" >> shadowrocket-rule.conf
           echo "DOMAIN-SUFFIX,t.me,🔐加密节点" >> shadowrocket-rule.conf
           echo "DOMAIN-SUFFIX,telegram.org,🔐加密节点" >> shadowrocket-rule.conf
