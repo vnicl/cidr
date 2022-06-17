@@ -13,12 +13,19 @@ jobs:
       - run: |
           cd ${{ github.workspace }}
       - run: git config --global user.email "you@example.com"
-      - run: git config --global user.name "Your Name"
+      - run: git config --global user.name "GitHub Actions"
       - name: Telegram
-        run: curl https://core.telegram.org/resources/cidr.txt > telegram.txt
-      - run: git add telegram.txt
+        run: |
+          curl https://core.telegram.org/resources/cidr.txt > telegram.txt
+          echo "[Rule]" >> shadowrocket-rule.conf
+          echo "# 电报" >> shadowrocket-rule.conf
+          echo "DOMAIN-SUFFIX,t.me,🔐加密节点" >> shadowrocket-rule.conf
+          echo "DOMAIN-SUFFIX,telegram.org,🔐加密节点" >> shadowrocket-rule.conf
+          cat telegram.txt | awk '{print "IP-CIDR,"$0",🔐加密节点,no-resolve"}' >> shadowrocket-rule.conf
+      - run: git add *
       - run: git commit -m update
       - run: git push
+
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
