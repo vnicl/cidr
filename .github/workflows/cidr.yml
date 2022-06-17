@@ -14,8 +14,9 @@ jobs:
           cd ${{ github.workspace }}
       - name: Telegram
         run: curl https://core.telegram.org/resources/cidr.txt > telegram.txt
-      - run: cat ./telegram.txt
-      - run: git status
+      - run: git add telegram.txt
+      - run: git commit -m update
+      - run: git push
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
