@@ -15,7 +15,7 @@ jobs:
       - name: Shadowrocket Telegram
         run: |
           echo "# Build Of GitHub Actions" > ./Shadowrocket/Telegram.conf
-          echo "# Date \t "`date '+%Y-%m-%d %H:%M:%S'` >> ./Shadowrocket/Telegram.conf
+          echo "# Date "`date '+%Y-%m-%d %H:%M:%S'` >> ./Shadowrocket/Telegram.conf
           echo "DOMAIN-SUFFIX,t.me" >> ./Shadowrocket/Telegram.conf
           echo "DOMAIN-SUFFIX,telegram.org" >> ./Shadowrocket/Telegram.conf
           curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}' >> ./Shadowrocket/Telegram.conf
@@ -23,7 +23,7 @@ jobs:
       - name: ClashX Telegram
         run: |
           echo "# Build Of GitHub Actions" > ./ClashX/Telegram.conf
-          echo "# Date \t "`date '+%Y-%m-%d %H:%M:%S'` >> ./ClashX/Telegram.conf
+          echo "# Date "`date '+%Y-%m-%d %H:%M:%S'` >> ./ClashX/Telegram.conf
           echo "payload:" > ./ClashX/Telegram.conf
           echo "  - DOMAIN-SUFFIX,t.me" >> ./ClashX/Telegram.conf
           echo "  - DOMAIN-SUFFIX,telegram.org" >> ./ClashX/Telegram.conf
