@@ -36,8 +36,9 @@ jobs:
     needs: [Telegram]
     runs-on: ubuntu-latest
     steps:
-      # - run: pwd
+      - run: pwd
       - run: |
+        cd ${{ github.workspace }}
         git config --global user.email "you@example.com"
         git config --global user.name "GitHub Actions"
         git add *
