@@ -18,7 +18,7 @@ jobs:
           Telegram+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
           Telegram+="DOMAIN-SUFFIX,t.me\n"
           Telegram+="DOMAIN-SUFFIX,telegram.org\n"
-          Telegram+="`curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}'`"
+          Telegram+=`curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}'`
           echo "::set-output name=rule::$Telegram"
       - name: ClashX
         id: ClashX
@@ -28,7 +28,7 @@ jobs:
           Telegram+="payload:\n"
           Telegram+="  - DOMAIN-SUFFIX,t.me\n"
           Telegram+="  - DOMAIN-SUFFIX,telegram.org\n"
-          Telegram+="`curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "  - IP-CIDR,"$0}else{print "  - IP-CIDR6,"$0}}'`"
+          Telegram+=`curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "  - IP-CIDR,"$0}else{print "  - IP-CIDR6,"$0}}'`
           echo "::set-output name=rule::$Telegram"
   Update:
     needs: [Telegram]
@@ -42,7 +42,6 @@ jobs:
           echo "${{ needs.Telegram.outputs.ClashX }}" > ./ClashX/Telegram.conf
           git config --global user.email "you@example.com"
           git config --global user.name "GitHub Actions"
-          git status
           git add *
           git commit -m update
           git push
