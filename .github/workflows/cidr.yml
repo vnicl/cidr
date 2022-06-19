@@ -45,24 +45,63 @@ jobs:
           echo "::set-output name=meta::`curl https://api.github.com/meta | awk 'BEGIN{RS=EOF}{gsub(/\n/,"");gsub(/ /, "");print}'`"
       - name: Create cidr.txt
         run: |
-          tmp="${{ join(fromJSON(steps.set_meta.outputs.meta).hooks, '\n') }}"
-          tmp+="\n"
-          tmp+="${{ join(fromJSON(steps.set_meta.outputs.meta).web, '\n') }}"
-          tmp+="\n"
-          tmp+="${{ join(fromJSON(steps.set_meta.outputs.meta).api, '\n') }}"
-          tmp+="\n"
-          tmp+="${{ join(fromJSON(steps.set_meta.outputs.meta).git, '\n') }}"
-          tmp+="\n"
-          tmp+="${{ join(fromJSON(steps.set_meta.outputs.meta).packages, '\n') }}"
-          tmp+="\n"
-          tmp+="${{ join(fromJSON(steps.set_meta.outputs.meta).pages, '\n') }}"
-          tmp+="\n"
-          tmp+="${{ join(fromJSON(steps.set_meta.outputs.meta).importer, '\n') }}"
-          tmp+="\n"
-          tmp+="${{ join(fromJSON(steps.set_meta.outputs.meta).actions, '\n') }}"
-          tmp+="\n"
-          tmp+="${{ join(fromJSON(steps.set_meta.outputs.meta).dependabot, '\n') }}"
-          echo -e $tmp | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}' > cidr.txt
+          conf="${{ join(fromJSON(steps.set_meta.outputs.meta).hooks, '\n') }}"
+          conf+="\n"
+          conf+="${{ join(fromJSON(steps.set_meta.outputs.meta).web, '\n') }}"
+          conf+="\n"
+          conf+="${{ join(fromJSON(steps.set_meta.outputs.meta).api, '\n') }}"
+          conf+="\n"
+          conf+="${{ join(fromJSON(steps.set_meta.outputs.meta).git, '\n') }}"
+          conf+="\n"
+          conf+="${{ join(fromJSON(steps.set_meta.outputs.meta).packages, '\n') }}"
+          conf+="\n"
+          conf+="${{ join(fromJSON(steps.set_meta.outputs.meta).pages, '\n') }}"
+          conf+="\n"
+          conf+="${{ join(fromJSON(steps.set_meta.outputs.meta).importer, '\n') }}"
+          conf+="\n"
+          conf+="${{ join(fromJSON(steps.set_meta.outputs.meta).actions, '\n') }}"
+          conf+="\n"
+          conf+="${{ join(fromJSON(steps.set_meta.outputs.meta).dependabot, '\n') }}"
+          echo -e $conf | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}' > cidr.txt
+      - name: Shadowrocket
+        id: Shadowrocket
+        run: |
+          rule="# Build Of GitHub Actions\n"
+          rule+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
+          rule+=`cat cidr.txt | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
+          echo "::set-output name=rule::`echo $rule`"
+      - name: ClashX
+        id: ClashX
+        run: |
+          rule="# Build Of GitHub Actions\n"
+          rule+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
+          rule+="payload:\n"
+          rule+=`cat cidr.txt | awk '{print "  - "$0}' | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
+          echo "::set-output name=rule::`echo $rule`"
+  Google:
+    runs-on: ubuntu-latest
+    outputs:
+      Shadowrocket: ${{ steps.Shadowrocket.outputs.rule }}
+      ClashX: ${{ steps.ClashX.outputs.rule }}
+    steps:
+      - name: Download goog.json
+        id: set_goog
+        run: |
+          echo "::set-output name=goog::`curl https://www.gstatic.com/ipranges/goog.json | awk 'BEGIN{RS=EOF}{gsub(/\n/,"");gsub(/ /, "");print}'`"
+      - name: Download cloud.json
+        id: set_cloud
+        run: |
+          echo "::set-output name=cloud::`curl https://www.gstatic.com/ipranges/cloud.json | awk 'BEGIN{RS=EOF}{gsub(/\n/,"");gsub(/ /, "");print}'`"
+      - name: Create cidr.txt
+        run: |
+          conf="${{ join(fromJSON(steps.set_goog.outputs.goog).prefixes.*.ipv4Prefix, '\n') }}"
+          conf+="\n"
+          conf="${{ join(fromJSON(steps.set_goog.outputs.goog).prefixes.*.ipv6Prefix, '\n') }}"
+          conf+="\n"
+          conf+="${{ join(fromJSON(steps.set_cloud.outputs.cloud).prefixes.*.ipv4Prefix, '\n') }}"
+          conf+="\n"
+          conf+="${{ join(fromJSON(steps.set_cloud.outputs.cloud).prefixes.*.ipv6Prefix, '\n') }}"
+          echo -e $conf | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}' > cidr.txt
       - name: Shadowrocket
         id: Shadowrocket
         run: |
@@ -79,7 +118,7 @@ jobs:
           rule+=`cat cidr.txt | awk '{print "  - "$0}' | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
           echo "::set-output name=rule::`echo $rule`"
   Update:
-    needs: [Telegram, GitHub]
+    needs: [Telegram, GitHub, Google]
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -90,9 +129,10 @@ jobs:
           echo -e "${{ needs.Telegram.outputs.ClashX }}" > ./ClashX/Telegram.conf
           echo -e "${{ needs.GitHub.outputs.Shadowrocket }}" > ./Shadowrocket/GitHub.conf
           echo -e "${{ needs.GitHub.outputs.ClashX }}" > ./ClashX/GitHub.conf
+          echo -e "${{ needs.Google.outputs.Shadowrocket }}" > ./Shadowrocket/Google.conf
+          echo -e "${{ needs.Google.outputs.ClashX }}" > ./ClashX/Google.conf
           git config --global user.email "you@example.com"
           git config --global user.name "GitHub Actions"
           git add *
           git commit -m update
           git push
-  
