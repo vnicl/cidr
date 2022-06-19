@@ -13,15 +13,15 @@ jobs:
     steps:
       - name: Downloads cidr.txt
         run: |
-          curl https://core.telegram.org/resources/cidr.txt > cidr.txt
+          curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}' > cidr.txt
       - name: Shadowrocket
         id: Shadowrocket
         run: |
           rule="# Build Of GitHub Actions\n"
           rule+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
-          rule+="DOMAIN-SUFFIX,t.me\n"
-          rule+="DOMAIN-SUFFIX,telegram.org\n"
-          rule+=`cat cidr.txt | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}' | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
+          # rule+="DOMAIN-SUFFIX,t.me\n"
+          # rule+="DOMAIN-SUFFIX,telegram.org\n"
+          rule+=`cat cidr.txt | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
           echo "::set-output name=rule::`echo $rule`"
       - name: ClashX
         id: ClashX
@@ -29,9 +29,9 @@ jobs:
           rule="# Build Of GitHub Actions\n"
           rule+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
           rule+="payload:\n"
-          rule+="  - DOMAIN-SUFFIX,t.me\n"
-          rule+="  - DOMAIN-SUFFIX,telegram.org\n"
-          rule+=`cat cidr.txt | awk -F . '{if(NF==4){print "  - IP-CIDR,"$0}else{print "  - IP-CIDR6,"$0}}' | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
+          # rule+="  - DOMAIN-SUFFIX,t.me\n"
+          # rule+="  - DOMAIN-SUFFIX,telegram.org\n"
+          rule+=`cat cidr.txt | awk '{print "  - "%0}' | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
           echo "::set-output name=rule::`echo $rule`"
   GitHub:
     runs-on: ubuntu-latest
@@ -46,15 +46,16 @@ jobs:
       - name: Shadowrocket
         id: Shadowrocket
         run: |
-          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).hooks, "\n") }}
-          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).web, "\n") }}
-          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).api, "|") }}
-          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).git, "|") }}
-          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).packages, "|") }}
-          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).pages, "|") }}
-          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).importer, "|") }}
-          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).actions, "|") }}
-          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).dependabot, "|") }}
+          echo `join(fromJSON(${{ steps.set_meta.outputs.meta }}).hooks, '\n')`
+          # echo ${{ join(fromJSON(steps.set_meta.outputs.meta).hooks, "\n") }}
+          # echo ${{ join(fromJSON(steps.set_meta.outputs.meta).web, "\n") }}
+          # echo ${{ join(fromJSON(steps.set_meta.outputs.meta).api, "|") }}
+          # echo ${{ join(fromJSON(steps.set_meta.outputs.meta).git, "|") }}
+          # echo ${{ join(fromJSON(steps.set_meta.outputs.meta).packages, "|") }}
+          # echo ${{ join(fromJSON(steps.set_meta.outputs.meta).pages, "|") }}
+          # echo ${{ join(fromJSON(steps.set_meta.outputs.meta).importer, "|") }}
+          # echo ${{ join(fromJSON(steps.set_meta.outputs.meta).actions, "|") }}
+          # echo ${{ join(fromJSON(steps.set_meta.outputs.meta).dependabot, "|") }}
       - name: ClashX
         id: ClashX
         run: |
