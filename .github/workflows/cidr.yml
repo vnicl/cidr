@@ -46,7 +46,15 @@ jobs:
       - name: Shadowrocket
         id: Shadowrocket
         run: |
-          echo ${{ fromJSON(steps.set_meta.outputs.meta).hooks }}
+          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).hooks, "\n") }}
+          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).web, "\n") }}
+          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).api, "|") }}
+          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).git, "|") }}
+          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).packages, "|") }}
+          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).pages, "|") }}
+          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).importer, "|") }}
+          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).actions, "|") }}
+          echo ${{ join(fromJSON(steps.set_meta.outputs.meta).dependabot, "|") }}
       - name: ClashX
         id: ClashX
         run: |
