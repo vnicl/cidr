@@ -19,7 +19,7 @@ jobs:
           echo "DOMAIN-SUFFIX,t.me" >> rule.conf
           echo "DOMAIN-SUFFIX,telegram.org" >> rule.conf
           curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}' >> rule.conf
-          echo "::set-output name=rule::`awk BEGIN{RS=EOF}'{gsub(/\n/,"`");print}' rule.conf`"
+          echo "::set-output name=rule::`awk BEGIN{RS=EOF}'{gsub("\n","`");print}' rule.conf`"
       - name: ClashX
         id: ClashX
         run: |
@@ -29,7 +29,7 @@ jobs:
           echo "  - DOMAIN-SUFFIX,t.me" >> rule.conf
           echo "  - DOMAIN-SUFFIX,telegram.org" >> rule.conf
           curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "  - IP-CIDR,"$0}else{print "  - IP-CIDR6,"$0}}' >> rule.conf
-          echo "::set-output name=rule::`awk BEGIN{RS=EOF}'{gsub(/\n/,"`");print}' rule.conf`"
+          echo "::set-output name=rule::`awk BEGIN{RS=EOF}'{gsub("\n","`");print}' rule.conf`"
   Update:
     needs: [Telegram]
     runs-on: ubuntu-latest
