@@ -40,14 +40,13 @@ jobs:
       ClashX: ${{ steps.ClashX.outputs.rule }}
     steps:
       - name: Download meta
+        id: set_meta
         run: |
-          conf=`curl https://api.github.com/meta | awk 'BEGIN{RS=EOF}{gsub(/\n/,"");gsub(/ /, "");print}'`
+          echo "::set-output name=meta::`curl https://api.github.com/meta | awk 'BEGIN{RS=EOF}{gsub(/\n/,"");gsub(/ /, "");print}'`"
       - name: Shadowrocket
         id: Shadowrocket
         run: |
-          echo $conf
-          meta=${{ fromJSON($conf) }}
-          echo join(meta.hooks)
+          echo ${{ fromJSON(steps.set_meta.outputs.meta).hooks }}
       - name: ClashX
         id: ClashX
         run: |
