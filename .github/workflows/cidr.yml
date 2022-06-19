@@ -11,6 +11,9 @@ jobs:
       Shadowrocket: ${{ steps.Shadowrocket.outputs.rule }}
       ClashX: ${{ steps.ClashX.outputs.rule }}
     steps:
+      - name: Downloads cidr.txt
+        run: |
+          curl https://core.telegram.org/resources/cidr.txt > cidr.txt
       - name: Shadowrocket
         id: Shadowrocket
         run: |
@@ -18,7 +21,7 @@ jobs:
           rule+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
           rule+="DOMAIN-SUFFIX,t.me\n"
           rule+="DOMAIN-SUFFIX,telegram.org\n"
-          rule+=`curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}' | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
+          rule+=`cat cidr.txt | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}' | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
           echo "::set-output name=rule::`echo $rule`"
       - name: ClashX
         id: ClashX
@@ -28,7 +31,7 @@ jobs:
           rule+="payload:\n"
           rule+="  - DOMAIN-SUFFIX,t.me\n"
           rule+="  - DOMAIN-SUFFIX,telegram.org\n"
-          rule+=`curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "  - IP-CIDR,"$0}else{print "  - IP-CIDR6,"$0}}' | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
+          rule+=`cat cidr.txt | awk -F . '{if(NF==4){print "  - IP-CIDR,"$0}else{print "  - IP-CIDR6,"$0}}' | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
           echo "::set-output name=rule::`echo $rule`"
   GitHub:
     runs-on: ubuntu-latest
@@ -36,10 +39,14 @@ jobs:
       Shadowrocket: ${{ steps.Shadowrocket.outputs.rule }}
       ClashX: ${{ steps.ClashX.outputs.rule }}
     steps:
+      - name: Download meta
+        run: |
+          conf=`curl https://api.github.com/meta | awk 'BEGIN{RS=EOF}{gsub(/\n/,"");gsub(/ /, "");print}'`
       - name: Shadowrocket
         id: Shadowrocket
         run: |
-          curl -I https://api.github.com/users/octocat
+          meta=${{ fromJSON(conf) }}
+          echo join(meta.hooks)
       - name: ClashX
         id: ClashX
         run: |
