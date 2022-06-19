@@ -14,24 +14,22 @@ jobs:
       - name: Shadowrocket
         id: Shadowrocket
         run: |
-          echo "# Build Of GitHub Actions" > rule.conf
-          echo "# Date `date '+%Y-%m-%d %H:%M:%S'`" >> rule.conf
-          echo "DOMAIN-SUFFIX,t.me" >> rule.conf
-          echo "DOMAIN-SUFFIX,telegram.org" >> rule.conf
-          curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}' >> rule.conf
-          rule=`awk BEGIN{RS=EOF}'{gsub(/\n/,"\`");print}' rule.conf`
-          echo "::set-output name=rule::$rule"
+          rule="# Build Of GitHub Actions\n"
+          rule+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
+          rule+="DOMAIN-SUFFIX,t.me\n"
+          rule+="DOMAIN-SUFFIX,telegram.org\n"
+          rule+=`curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}' | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
+          echo "::set-output name=rule::`echo $rule`"
       - name: ClashX
         id: ClashX
         run: |
-          echo "# Build Of GitHub Actions" > rule.conf
-          echo "# Date `date '+%Y-%m-%d %H:%M:%S'`" >> rule.conf
-          echo "payload:" >> rule.conf
-          echo "  - DOMAIN-SUFFIX,t.me" >> rule.conf
-          echo "  - DOMAIN-SUFFIX,telegram.org" >> rule.conf
-          curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "  - IP-CIDR,"$0}else{print "  - IP-CIDR6,"$0}}' >> rule.conf
-          rule=`awk BEGIN{RS=EOF}'{gsub(/\n/,"\`");print}' rule.conf`
-          echo "::set-output name=rule::$rule"
+          rule="# Build Of GitHub Actions\n"
+          rule+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
+          rule+="payload:\n"
+          rule+="  - DOMAIN-SUFFIX,t.me\n"
+          rule+="  - DOMAIN-SUFFIX,telegram.org\n"
+          rule+=`curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "  - IP-CIDR,"$0}else{print "  - IP-CIDR6,"$0}}' | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
+          echo "::set-output name=rule::`echo $rule`"
   Update:
     needs: [Telegram]
     runs-on: ubuntu-latest
@@ -40,10 +38,8 @@ jobs:
         uses: actions/checkout@master
       - name: Git push
         run: |
-          echo ${{ needs.Telegram.outputs.Shadowrocket }}
-          echo ${{ needs.Telegram.outputs.ClashX }}
-          echo "${{ needs.Telegram.outputs.Shadowrocket }}" > ./Shadowrocket/Telegram.conf
-          echo "${{ needs.Telegram.outputs.ClashX }}" > ./ClashX/Telegram.conf
+          echo -e ${{ needs.Telegram.outputs.Shadowrocket }} > ./Shadowrocket/Telegram.conf
+          echo -e ${{ needs.Telegram.outputs.ClashX }} > ./ClashX/Telegram.conf
           git config --global user.email "you@example.com"
           git config --global user.name "GitHub Actions"
           git add *
