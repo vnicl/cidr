@@ -38,8 +38,8 @@ jobs:
         uses: actions/checkout@master
       - name: Git push
         run: |
-          echo -e ${{ needs.Telegram.outputs.Shadowrocket }} > ./Shadowrocket/Telegram.conf
-          echo -e ${{ needs.Telegram.outputs.ClashX }} > ./ClashX/Telegram.conf
+          echo -e "${{ needs.Telegram.outputs.Shadowrocket }}" > ./Shadowrocket/Telegram.conf
+          echo -e "${{ needs.Telegram.outputs.ClashX }}" > ./ClashX/Telegram.conf
           git config --global user.email "you@example.com"
           git config --global user.name "GitHub Actions"
           git add *
