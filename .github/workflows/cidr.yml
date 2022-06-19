@@ -43,6 +43,27 @@ jobs:
         id: set_meta
         run: |
           echo "::set-output name=meta::`curl https://api.github.com/meta | awk 'BEGIN{RS=EOF}{gsub(/\n/,"");gsub(/ /, "");print}'`"
+      - name: Create cidr.txt
+        run: |
+          json=${{ fromJSON(steps.set_meta.outputs.meta) }}
+          tmp="${{ join(json.hooks, '\n') }}"
+          tmp+="\n"
+          tmp+="${{ join(json.web, '\n') }}"
+          tmp+="\n"
+          tmp+="${{ join(json.api, '\n') }}"
+          tmp+="\n"
+          tmp+="${{ join(json.git, '\n') }}"
+          tmp+="\n"
+          tmp+="${{ join(json.packages, '\n') }}"
+          tmp+="\n"
+          tmp+="${{ join(json.pages, '\n') }}"
+          tmp+="\n"
+          tmp+="${{ join(json.importer, '\n') }}"
+          tmp+="\n"
+          tmp+="${{ join(json.actions, '\n') }}"
+          tmp+="\n"
+          tmp+="${{ join(json.dependabot, '\n') }}"
+          echo $tmp
       - name: Shadowrocket
         id: Shadowrocket
         run: |
