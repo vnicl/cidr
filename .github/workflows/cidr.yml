@@ -36,12 +36,13 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@master
-      - run: |
-          cd ${{ github.workspace }}
       - name: Git push
         run: |
+          cd ${{ github.workspace }}
+          ls
           echo ${{ needs.Telegram.outputs.Shadowrocket }} > ./Shadowrocket/Telegram.conf
           echo ${{ needs.Telegram.outputs.ClashX }} > ./ClashX/Telegram.conf
+          ls
           git config --global user.email "you@example.com"
           git config --global user.name "GitHub Actions"
           git status
