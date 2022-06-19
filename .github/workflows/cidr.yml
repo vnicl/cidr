@@ -45,33 +45,39 @@ jobs:
           echo "::set-output name=meta::`curl https://api.github.com/meta | awk 'BEGIN{RS=EOF}{gsub(/\n/,"");gsub(/ /, "");print}'`"
       - name: Create cidr.txt
         run: |
-          json=${{ fromJSON(steps.set_meta.outputs.meta) }}
-          tmp="${{ join(json.hooks, '\n') }}"
+          tmp="${{ join(fromJSON(steps.set_meta.outputs.meta).hooks, '\n') }}"
           tmp+="\n"
-          tmp+="${{ join(json.web, '\n') }}"
+          tmp+="${{ join(fromJSON(steps.set_meta.outputs.meta).web, '\n') }}"
           tmp+="\n"
-          tmp+="${{ join(json.api, '\n') }}"
+          tmp+="${{ join(fromJSON(steps.set_meta.outputs.meta).api, '\n') }}"
           tmp+="\n"
-          tmp+="${{ join(json.git, '\n') }}"
+          tmp+="${{ join(fromJSON(steps.set_meta.outputs.meta).git, '\n') }}"
           tmp+="\n"
-          tmp+="${{ join(json.packages, '\n') }}"
+          tmp+="${{ join(fromJSON(steps.set_meta.outputs.meta).packages, '\n') }}"
           tmp+="\n"
-          tmp+="${{ join(json.pages, '\n') }}"
+          tmp+="${{ join(fromJSON(steps.set_meta.outputs.meta).pages, '\n') }}"
           tmp+="\n"
-          tmp+="${{ join(json.importer, '\n') }}"
+          tmp+="${{ join(fromJSON(steps.set_meta.outputs.meta).importer, '\n') }}"
           tmp+="\n"
-          tmp+="${{ join(json.actions, '\n') }}"
+          tmp+="${{ join(fromJSON(steps.set_meta.outputs.meta).actions, '\n') }}"
           tmp+="\n"
-          tmp+="${{ join(json.dependabot, '\n') }}"
-          echo $tmp
+          tmp+="${{ join(fromJSON(steps.set_meta.outputs.meta).dependabot, '\n') }}"
+          echo -e $tmp | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}' > cidr.txt
       - name: Shadowrocket
         id: Shadowrocket
         run: |
-          echo "${{ join(fromJSON(steps.set_meta.outputs.meta).hooks, '\n') }}"
+          rule="# Build Of GitHub Actions\n"
+          rule+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
+          rule+=`cat cidr.txt | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
+          echo "::set-output name=rule::`echo $rule`"
       - name: ClashX
         id: ClashX
         run: |
-          echo 1
+          rule="# Build Of GitHub Actions\n"
+          rule+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
+          rule+="payload:\n"
+          rule+=`cat cidr.txt | awk '{print "  - "$0}' | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
+          echo "::set-output name=rule::`echo $rule`"
   Update:
     needs: [Telegram, GitHub]
     runs-on: ubuntu-latest
@@ -82,6 +88,8 @@ jobs:
         run: |
           echo -e "${{ needs.Telegram.outputs.Shadowrocket }}" > ./Shadowrocket/Telegram.conf
           echo -e "${{ needs.Telegram.outputs.ClashX }}" > ./ClashX/Telegram.conf
+          echo -e "${{ needs.GitHub.outputs.Shadowrocket }}" > ./Shadowrocket/GitHub.conf
+          echo -e "${{ needs.GitHub.outputs.ClashX }}" > ./ClashX/GitHub.conf
           git config --global user.email "you@example.com"
           git config --global user.name "GitHub Actions"
           git add *
