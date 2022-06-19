@@ -32,17 +32,17 @@ jobs:
           echo "  - DOMAIN-SUFFIX,t.me" >> ./ClashX/Telegram.conf
           echo "  - DOMAIN-SUFFIX,telegram.org" >> ./ClashX/Telegram.conf
           curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "  - IP-CIDR,"$0}else{print "  - IP-CIDR6,"$0}}' >> ./ClashX/Telegram.conf
-  Git push:
-    needs: [Telegram]
-    runs-on: ubuntu-latest
-    steps:
-      - run: pwd
-      - run: |
-          git config --global user.email "you@example.com"
-          git config --global user.name "GitHub Actions"
-          git add *
-          git commit -m update
-          git push
+  # Git push:
+  #   needs: [Telegram]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: pwd
+  #     - run: |
+  #         git config --global user.email "you@example.com"
+  #         git config --global user.name "GitHub Actions"
+  #         git add *
+  #         git commit -m update
+  #         git push
   # Update:
   #   runs-on: ubuntu-latest
   #   steps:
