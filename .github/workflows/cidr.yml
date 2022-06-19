@@ -38,12 +38,11 @@ jobs:
     steps:
       - run: pwd
       - run: |
-        cd ${{ github.workspace }}
-        git config --global user.email "you@example.com"
-        git config --global user.name "GitHub Actions"
-        git add *
-        git commit -m update
-        git push
+          git config --global user.email "you@example.com"
+          git config --global user.name "GitHub Actions"
+          git add *
+          git commit -m update
+          git push
   # Update:
   #   runs-on: ubuntu-latest
   #   steps:
