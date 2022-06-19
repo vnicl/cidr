@@ -14,22 +14,22 @@ jobs:
       - name: Shadowrocket
         id: Shadowrocket
         run: |
-          Telegram="# Build Of GitHub Actions\n"
-          Telegram+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
-          Telegram+="DOMAIN-SUFFIX,t.me\n"
-          Telegram+="DOMAIN-SUFFIX,telegram.org\n"
-          Telegram+=`curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}'`
-          echo "::set-output name=rule::$Telegram"
+          echo "# Build Of GitHub Actions" > rule.conf
+          echo "# Date `date '+%Y-%m-%d %H:%M:%S'`" >> rule.conf
+          echo "DOMAIN-SUFFIX,t.me" >> rule.conf
+          echo "DOMAIN-SUFFIX,telegram.org" >> rule.conf
+          curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}' >> rule.conf
+          echo "::set-output name=rule::`cat rule.conf`"
       - name: ClashX
         id: ClashX
         run: |
-          Telegram="# Build Of GitHub Actions\n"
-          Telegram+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
-          Telegram+="payload:\n"
-          Telegram+="  - DOMAIN-SUFFIX,t.me\n"
-          Telegram+="  - DOMAIN-SUFFIX,telegram.org\n"
-          Telegram+=`curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "  - IP-CIDR,"$0}else{print "  - IP-CIDR6,"$0}}'`
-          echo "::set-output name=rule::$Telegram"
+          echo "# Build Of GitHub Actions" > rule.conf
+          echo "# Date `date '+%Y-%m-%d %H:%M:%S'`" >> rule.conf
+          echo "payload:" >> rule.conf
+          echo "  - DOMAIN-SUFFIX,t.me" >> rule.conf
+          echo "  - DOMAIN-SUFFIX,telegram.org" >> rule.conf
+          curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "  - IP-CIDR,"$0}else{print "  - IP-CIDR6,"$0}}' >> rule.conf
+          echo "::set-output name=rule::`cat rule.conf`"
   Update:
     needs: [Telegram]
     runs-on: ubuntu-latest
