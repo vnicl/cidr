@@ -5,14 +5,14 @@ on:
   schedule:
     - cron: '0 0 * * *'
 jobs:
-  Check out repository code:
+  Checkout-Code:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Check out repository code
         uses: actions/checkout@v3
       # - run: cd ${{ github.workspace }}
   Telegram:
-    needs: [Check out repository code]
+    needs: [Checkout-Code]
     runs-on: ubuntu-latest
     steps:
       - run: pwd
