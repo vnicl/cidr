@@ -46,7 +46,8 @@ jobs:
       - name: Shadowrocket
         id: Shadowrocket
         run: |
-          echo ${{ fromJSON(steps.set_meta.outputs.meta).hooks }}
+          echo "${{ fromJSON(steps.set_meta.outputs.meta).hooks }}"
+          echo "${{ join(fromJSON(steps.set_meta.outputs.meta).hooks) }}"
       - name: ClashX
         id: ClashX
         run: |
