@@ -45,7 +45,8 @@ jobs:
       - name: Shadowrocket
         id: Shadowrocket
         run: |
-          meta=${{ fromJSON(conf) }}
+          echo $conf
+          meta=${{ fromJSON($conf) }}
           echo join(meta.hooks)
       - name: ClashX
         id: ClashX
