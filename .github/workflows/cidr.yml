@@ -10,7 +10,8 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      # - run: cd ${{ github.workspace }}
+      - run: pwd
+      - run: echo ${{ github.workspace }}
   Telegram:
     needs: [Checkout-Code]
     runs-on: ubuntu-latest
