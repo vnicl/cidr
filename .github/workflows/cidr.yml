@@ -11,13 +11,13 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
       - run: pwd
-      - run: echo ${{ github.workspace }}
+      - run: ls ${{ github.workspace }}
   Telegram:
     needs: [Checkout-Code]
     runs-on: ubuntu-latest
     steps:
       - run: pwd
-      - run: echo ${{ github.workspace }}
+      - run: ls ${{ github.workspace }}
       - name: Shadowrocket
         run: |
           echo "# Build Of GitHub Actions" > ./Shadowrocket/Telegram.conf
