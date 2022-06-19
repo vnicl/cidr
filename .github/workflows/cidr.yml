@@ -1,40 +1,78 @@
 name: Update cidr
 on: 
-  # push:
-   # branches: [master]
+  push:
+   branches: [master]
   schedule:
     - cron: '0 0 * * *'
 jobs:
-  Update:
+  Check out repository code:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v3
+      - name: checkout
+        users: actions/checkout@v3
       - run: |
           cd ${{ github.workspace }}
-      - name: Shadowrocket Telegram
+  Telegram:
+    needs: [Check out repository code]
+    runs-on: ubuntu-latest
+    steps:
+      - run: pwd
+      - name: Shadowrocket
         run: |
           echo "# Build Of GitHub Actions" > ./Shadowrocket/Telegram.conf
           echo "# Date "`date '+%Y-%m-%d %H:%M:%S'` >> ./Shadowrocket/Telegram.conf
           echo "DOMAIN-SUFFIX,t.me" >> ./Shadowrocket/Telegram.conf
           echo "DOMAIN-SUFFIX,telegram.org" >> ./Shadowrocket/Telegram.conf
           curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}' >> ./Shadowrocket/Telegram.conf
-          
-      - name: ClashX Telegram
+      - name: ClashX
         run: |
           echo "# Build Of GitHub Actions" > ./ClashX/Telegram.conf
           echo "# Date "`date '+%Y-%m-%d %H:%M:%S'` >> ./ClashX/Telegram.conf
-          echo "payload:" > ./ClashX/Telegram.conf
+          echo "payload:" >> ./ClashX/Telegram.conf
           echo "  - DOMAIN-SUFFIX,t.me" >> ./ClashX/Telegram.conf
           echo "  - DOMAIN-SUFFIX,telegram.org" >> ./ClashX/Telegram.conf
           curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "  - IP-CIDR,"$0}else{print "  - IP-CIDR6,"$0}}' >> ./ClashX/Telegram.conf
-      - name: Git push
-        run: |
-          git config --global user.email "you@example.com"
-          git config --global user.name "GitHub Actions"
-          git add *
-          git commit -m update
-          git push
+  Git push:
+    needs: [Telegram]
+    runs-on: ubuntu-latest
+    steps:
+      - run: pwd
+      - run: |
+        git config --global user.email "you@example.com"
+        git config --global user.name "GitHub Actions"
+        git add *
+        git commit -m update
+        git push
+  # Update:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Check out repository code
+  #       uses: actions/checkout@v3
+  #     - run: |
+  #         cd ${{ github.workspace }}
+  #     - name: Shadowrocket Telegram
+  #       run: |
+  #         echo "# Build Of GitHub Actions" > ./Shadowrocket/Telegram.conf
+  #         echo "# Date "`date '+%Y-%m-%d %H:%M:%S'` >> ./Shadowrocket/Telegram.conf
+  #         echo "DOMAIN-SUFFIX,t.me" >> ./Shadowrocket/Telegram.conf
+  #         echo "DOMAIN-SUFFIX,telegram.org" >> ./Shadowrocket/Telegram.conf
+  #         curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}' >> ./Shadowrocket/Telegram.conf
+          
+  #     - name: ClashX Telegram
+  #       run: |
+  #         echo "# Build Of GitHub Actions" > ./ClashX/Telegram.conf
+  #         echo "# Date "`date '+%Y-%m-%d %H:%M:%S'` >> ./ClashX/Telegram.conf
+  #         echo "payload:" > ./ClashX/Telegram.conf
+  #         echo "  - DOMAIN-SUFFIX,t.me" >> ./ClashX/Telegram.conf
+  #         echo "  - DOMAIN-SUFFIX,telegram.org" >> ./ClashX/Telegram.conf
+  #         curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "  - IP-CIDR,"$0}else{print "  - IP-CIDR6,"$0}}' >> ./ClashX/Telegram.conf
+  #     - name: Git push
+  #       run: |
+  #         git config --global user.email "you@example.com"
+  #         git config --global user.name "GitHub Actions"
+  #         git add *
+  #         git commit -m update
+  #         git push
 
       # - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       # - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
