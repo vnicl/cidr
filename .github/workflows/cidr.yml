@@ -30,6 +30,20 @@ jobs:
           rule+="  - DOMAIN-SUFFIX,telegram.org\n"
           rule+=`curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "  - IP-CIDR,"$0}else{print "  - IP-CIDR6,"$0}}' | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
           echo "::set-output name=rule::`echo $rule`"
+  GitHub:
+    runs-on: ubuntu-latest
+    outputs:
+      Shadowrocket: ${{ steps.Shadowrocket.outputs.rule }}
+      ClashX: ${{ steps.ClashX.outputs.rule }}
+    steps:
+      - name: Shadowrocket
+        id: Shadowrocket
+        run: |
+          curl -I https://api.github.com/users/octocat
+      - name: ClashX
+        id: ClashX
+        run: |
+          echo 1
   Update:
     needs: [Telegram]
     runs-on: ubuntu-latest
