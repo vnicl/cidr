@@ -14,11 +14,12 @@ jobs:
       - name: Shadowrocket
         id: Shadowrocket
         run: |
-          rule="# Build Of GitHub Actions\n"
-          rule+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
-          rule+="DOMAIN-SUFFIX,t.me\n"
-          rule+="DOMAIN-SUFFIX,telegram.org\n"
-          rule+=`curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}' | awk 'BEGIN{RS=EOF}{print}'`
+          echo "# Build Of GitHub Actions" > rule.conf
+          echo "# Date `date '+%Y-%m-%d %H:%M:%S'`" >> rule.conf
+          echo "DOMAIN-SUFFIX,t.me" >> rule.conf
+          echo "DOMAIN-SUFFIX,telegram.org" >> rule.conf
+          curl https://core.telegram.org/resources/cidr.txt | awk -F . '{if(NF==4){print "IP-CIDR,"$0}else{print "IP-CIDR6,"$0}}' >> rule.conf
+          rule=`awk BEGIN{RS=EOF}'{gsub(/\n/,"\`");print}' rule.conf`
           echo "::set-output name=rule::$rule"
       - name: ClashX
         id: ClashX
