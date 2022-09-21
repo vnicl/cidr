@@ -68,6 +68,13 @@ jobs:
         run: |
           rule="# Build Of GitHub Actions\n"
           rule+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
+          rule+="DOMAIN-SUFFIX,git-scm.com\n"
+          rule+="DOMAIN-SUFFIX,git.io\n"
+          rule+="DOMAIN-SUFFIX,gitbooks.io\n"
+          rule+="DOMAIN-SUFFIX,github.com\n"
+          rule+="DOMAIN-SUFFIX,github.io\n"
+          rule+="DOMAIN-SUFFIX,githubassets.com\n"
+          rule+="DOMAIN-SUFFIX,githubusercontent.com\n"
           rule+=`cat cidr.txt | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
           echo "::set-output name=rule::`echo $rule`"
       - name: ClashX
@@ -76,6 +83,13 @@ jobs:
           rule="# Build Of GitHub Actions\n"
           rule+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
           rule+="payload:\n"
+          rule+="  - DOMAIN-SUFFIX,git-scm.com\n"
+          rule+="  - DOMAIN-SUFFIX,git.io\n"
+          rule+="  - DOMAIN-SUFFIX,gitbooks.io\n"
+          rule+="  - DOMAIN-SUFFIX,github.com\n"
+          rule+="  - DOMAIN-SUFFIX,github.io\n"
+          rule+="  - DOMAIN-SUFFIX,githubassets.com\n"
+          rule+="  - DOMAIN-SUFFIX,githubusercontent.com\n"
           rule+=`cat cidr.txt | awk '{print "  - "$0}' | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
           echo "::set-output name=rule::`echo $rule`"
   Google:
@@ -107,6 +121,13 @@ jobs:
         run: |
           rule="# Build Of GitHub Actions\n"
           rule+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
+          rule+="DOMAIN-SUFFIX,google.com\n"
+          rule+="DOMAIN-SUFFIX,google.com.hk\n"
+          rule+="DOMAIN-SUFFIX,googleusercontent.com\n"
+          rule+="DOMAIN-SUFFIX,gstatic.com\n"
+          rule+="DOMAIN-SUFFIX,googleapis.com\n"
+          rule+="DOMAIN-SUFFIX,gcloudcs.com\n"
+          rule+="DOMAIN-SUFFIX,gmail.com\n"
           rule+=`cat cidr.txt | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
           echo "::set-output name=rule::`echo $rule`"
       - name: ClashX
@@ -115,6 +136,13 @@ jobs:
           rule="# Build Of GitHub Actions\n"
           rule+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
           rule+="payload:\n"
+          rule+="  - DOMAIN-SUFFIX,google.com\n"
+          rule+="  - DOMAIN-SUFFIX,google.com.hk\n"
+          rule+="  - DOMAIN-SUFFIX,googleusercontent.com\n"
+          rule+="  - DOMAIN-SUFFIX,gstatic.com\n"
+          rule+="  - DOMAIN-SUFFIX,googleapis.com\n"
+          rule+="  - DOMAIN-SUFFIX,gcloudcs.com\n"
+          rule+="  - DOMAIN-SUFFIX,gmail.com\n"
           rule+=`cat cidr.txt | awk '{print "  - "$0}' | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
           echo "::set-output name=rule::`echo $rule`"
   Update:
