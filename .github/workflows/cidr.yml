@@ -19,8 +19,8 @@ jobs:
         run: |
           rule="# Build Of GitHub Actions\n"
           rule+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
-          # rule+="DOMAIN-SUFFIX,t.me\n"
-          # rule+="DOMAIN-SUFFIX,telegram.org\n"
+          rule+="DOMAIN-SUFFIX,t.me\n"
+          rule+="DOMAIN-SUFFIX,telegram.org\n"
           rule+=`cat cidr.txt | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
           echo "::set-output name=rule::`echo $rule`"
       - name: ClashX
@@ -29,8 +29,8 @@ jobs:
           rule="# Build Of GitHub Actions\n"
           rule+="# Date `date '+%Y-%m-%d %H:%M:%S'`\n"
           rule+="payload:\n"
-          # rule+="  - DOMAIN-SUFFIX,t.me\n"
-          # rule+="  - DOMAIN-SUFFIX,telegram.org\n"
+          rule+="  - DOMAIN-SUFFIX,t.me\n"
+          rule+="  - DOMAIN-SUFFIX,telegram.org\n"
           rule+=`cat cidr.txt | awk '{print "  - "$0}' | awk 'BEGIN{RS=EOF}{gsub(/\n/,"\\\n");print}'`
           echo "::set-output name=rule::`echo $rule`"
   GitHub:
